@@ -1,5 +1,5 @@
 from Util import Util
-from chaper01.Audience import Audience
+from chapter01.Audience import Audience
 
 
 class TicketOffice:

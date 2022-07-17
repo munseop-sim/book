@@ -1,5 +1,5 @@
-from chaper01.Audience import Audience
-from chaper01.TicketSeller import TicketSeller
+from chapter01.Audience import Audience
+from chapter01.TicketSeller import TicketSeller
 
 
 class Theater:

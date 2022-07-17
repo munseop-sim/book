@@ -1,6 +1,6 @@
 from Util import Util
-from chaper01.Invitation import Invitation
-from chaper01.Ticket import Ticket
+from chapter01.Invitation import Invitation
+from chapter01.Ticket import Ticket
 
 
 class Bag:

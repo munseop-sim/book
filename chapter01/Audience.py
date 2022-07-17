@@ -1,6 +1,6 @@
 from Util import Util
-from chaper01.Bag import Bag
-from chaper01.Ticket import Ticket
+from chapter01.Bag import Bag
+from chapter01.Ticket import Ticket
 
 
 class Audience:

@@ -1,5 +1,5 @@
-from chaper01.Audience import Audience
-from chaper01.TicketOffice import TicketOffice
+from chapter01.Audience import Audience
+from chapter01.TicketOffice import TicketOffice
 
 
 class TicketSeller:
