@@ -27,13 +27,18 @@ class PeriodCondition(DiscountCondition):
 
     def is_satisfied_by(self, screening: Screening) -> bool:
         return (
-                screening.get_start_time().strftime('%A') == self._day_of_week
-                and self._start_time >= screening.get_start_time()
-                and self._end_time >= screening.get_start_time()
+                (screening.get_start_time() is None or screening.get_start_time().strftime('%A') == self._day_of_week)
+                and (screening.get_start_time() is None or (self._start_time >= screening.get_start_time()
+                                                            and self._end_time >= screening.get_start_time()))
         )
 
 
 class DiscountPolicy(metaclass=ABCMeta):
+    def calculate_discount_amount(self, screening: Screening) -> Money:
+        raise NotImplementedError
+
+
+class DefaultDiscountPolicy(DiscountPolicy):
     def __init__(self, conditions: list):
         self._conditions = conditions
 
@@ -49,7 +54,7 @@ class DiscountPolicy(metaclass=ABCMeta):
         pass
 
 
-class AmountDiscountPolicy(DiscountPolicy):
+class AmountDiscountPolicy(DefaultDiscountPolicy, DiscountPolicy):
     def __init__(self, discount_amount: Money, conditions: list):
         super().__init__(conditions)
         self._discount_amount = discount_amount
@@ -58,7 +63,7 @@ class AmountDiscountPolicy(DiscountPolicy):
         return self._discount_amount
 
 
-class PercentDiscountPolicy(DiscountPolicy):
+class PercentDiscountPolicy(DefaultDiscountPolicy, DiscountPolicy):
     def __init__(self, percent: float, conditions: list):
         super().__init__(conditions)
         self._percent = percent
@@ -68,5 +73,9 @@ class PercentDiscountPolicy(DiscountPolicy):
 
 
 class NoneDiscountPolicy(DiscountPolicy):
-    def get_discount_amount(self, screening: Screening):
+
+    def calculate_discount_amount(self, screening: Screening) -> Money:
         return Money.zero()
+#
+# ndc = NoneDiscountPolicy([SequenceCondition(1), PeriodCondition('Monday', datetime.now(), datetime.now())])
+# ndc.calculate_discount_amount(Screening())
