@@ -51,7 +51,7 @@ class DiscountPolicy(metaclass=ABCMeta):
 
 class AmountDiscountPolicy(DiscountPolicy):
     def __init__(self, discount_amount: Money, conditions: list):
-        super(conditions)
+        super().__init__(conditions)
         self._discount_amount = discount_amount
 
     def get_discount_amount(self, screening: Screening):
@@ -60,9 +60,13 @@ class AmountDiscountPolicy(DiscountPolicy):
 
 class PercentDiscountPolicy(DiscountPolicy):
     def __init__(self, percent: float, conditions: list):
-        super(conditions)
+        super().__init__(conditions)
         self._percent = percent
 
     def get_discount_amount(self, screening: Screening):
         return screening.get_movie_fee().times(self._percent)
 
+
+class NoneDiscountPolicy(DiscountPolicy):
+    def get_discount_amount(self, screening: Screening):
+        return Money.zero()
