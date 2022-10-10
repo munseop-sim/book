@@ -1,2 +1,2 @@
-# py-objects
-Object Study (파이썬코드)
+# book-objects
+Object Study
