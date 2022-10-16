@@ -15,58 +15,70 @@ class Call(private val from: LocalDateTime,
  * 통화요금 계산을 위한 Phone 클래스 (최초 요구사항)
  * (요구사항 추가) 통화요금에 대한 세금부과
  */
-class Phone(private val amount:Int,
-            private val seconds:Duration,
-            private val taxRate:Double){
-    private var calls:ArrayList<Call>  = ArrayList()
-    fun getCalls():List<Call> = this.calls
-    fun call(call:Call){
-        this.calls.add(call)
-    }
-
-    fun calculateFee():Double {
-        var result:Double = 0.0
-        this.calls.forEach{
-            var calculatedValue = amount.times(it.getDuration().seconds / this.seconds.seconds)
-            result += calculatedValue
-        }
-        return result.plus(result.times(this.taxRate))
-    }
-}
-
-/**
- * 기존의 Phone 클래스를 복사하여 관련내용만 조금 수정함
- * 아래와 같은 코드를 작성하면 구현시간은 절약이 가능하나, Phone, NightlyDiscountPhone 클래스 사이에 중복코드가 생성이 된다.
- * 이때에 생성된 중복코드로 인해 요구사항 변경시에 어떠한 일이 벌어질지 예상 불가능하다.
- *
- * (요구사항 추가) 통화요금에 대한 세금부과
- */
-class NightlyDiscountPhone(
-    val nightlyAmount:Int,
-    val regularAmount:Int,
-    val seconds: Duration,
-    val taxRate: Double
-){
+class Phone{
     private val LATE_NIGHT_HOUR:Int = 22
+    enum class PhoneType{
+        REGULAR,
+        NIGHTLY
+    }
+
+    private var phoneType:PhoneType? = null
+    private var amount:Double? = null
+    private var regularAmount:Double? = null
+    private var nightlyAmount:Double? = null
+    private var seconds:Duration? = null
+    private var taxRate:Double? = null
+
     private val calls:ArrayList<Call> = ArrayList()
 
+    constructor(amount:Double,
+                seconds: Duration
+    ):this(PhoneType.REGULAR, amount, 0.0, 0.0, seconds){}
+
+    constructor(nightlyAmount: Double,
+                regularAmount: Double,
+                seconds: Duration
+    ):this(PhoneType.NIGHTLY, 0.0, nightlyAmount, regularAmount, seconds){}
+
+    private constructor(phoneType: PhoneType,
+    amount: Double,
+    nightlyAmount: Double,
+    regularAmount: Double,
+    seconds: Duration){
+        this.phoneType = phoneType
+        this.amount = amount
+        this.regularAmount = regularAmount
+        this.nightlyAmount = nightlyAmount
+        this.seconds = seconds
+    }
+
+    fun getCalls():List<Call> = this.calls
     fun call(call:Call){
         this.calls.add(call)
     }
-    fun getCalls():List<Call> = this.calls
 
     fun calculateFee():Double {
-        var result = 0.0
+        if(this.phoneType == null){
+            throw NullPointerException("")
+        }
+        var result:Double = 0.0
         this.calls.forEach{
-            if(it.getFrom().hour >= this.LATE_NIGHT_HOUR){
-                result += this.nightlyAmount.times(it.getDuration().seconds / this.seconds.seconds)
+            if(this.phoneType == PhoneType.REGULAR ){
+                var calculatedValue = amount!!.times(other = it.getDuration().seconds / this.seconds!!.seconds)
+                result += calculatedValue
             }else{
-                result += this.regularAmount.times(it.getDuration().seconds / this.seconds.seconds)
+                if(it.getFrom().hour >= this.LATE_NIGHT_HOUR){
+                    result += this.nightlyAmount!!.times(it.getDuration().seconds / this.seconds!!.seconds)
+                }else{
+                    result += this.regularAmount!!.times(it.getDuration().seconds / this.seconds!!.seconds)
+                }
             }
         }
-        return result.plus(result.times(this.taxRate))
+        return result
     }
 }
+
+
 
 
 
@@ -74,10 +86,11 @@ class NightlyDiscountPhone(
  * 10초당 5원씩 부과되는 요금제에 가입한 사용자가 각각 1분동안 두번 통화를 한 경우
  *
  * (요구사항 추가) 통화요금에 대한 세금부과 - 코드 중복 발생()
+ * (코드개선) 중복코드를 피하기 위해 타입코드를 사용하여 클래스를 합침. 하지만 타입코드를 사용함으로 인해 낮은 응집도와 높은 결합또를 가지는 구조가 되었음
  */
 fun 요구사항() {
-    val phone: Phone = Phone(5, Duration.ofSeconds(10), 0.03)
-    val nightlyPhone = NightlyDiscountPhone(3,5, Duration.ofSeconds(10), 0.03)
+    val phone: Phone = Phone(5.0, Duration.ofSeconds(10))
+    val nightlyPhone = Phone(3.0,5.0, Duration.ofSeconds(10))
     nightlyPhone.call(
         Call(
             LocalDateTime.of(2018, 1, 1, 22, 10, 0),
