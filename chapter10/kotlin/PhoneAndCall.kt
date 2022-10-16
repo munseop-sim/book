@@ -14,54 +14,55 @@ class Call(private val from: LocalDateTime,
 /**
  * 통화요금 계산을 위한 Phone 클래스 (최초 요구사항)
  * (요구사항 추가) 통화요금에 대한 세금부과
+ *
+ * 차이를 메서드로 추출
  */
-open class Phone{
-    protected var amount:Double? = null
-    protected var seconds:Duration? = null
-    protected val calls:ArrayList<Call> = ArrayList()
-
-    constructor(){}
-
-    constructor(amount:Double,
-                seconds: Duration
-    ){
-        this.amount = amount
-        this.seconds = seconds
-    }
-
+open class Phone(val amount:Double,val seconds:Duration){
+    private val calls:ArrayList<Call> = ArrayList()
 
     fun getCalls():List<Call> = this.calls
     fun call(call:Call){
         this.calls.add(call)
     }
 
-    open fun calculateFee():Double {
+    fun calculateFee():Double {
         var result:Double = 0.0
         this.calls.forEach{
-            var calculatedValue = amount!!.times(other = it.getDuration().seconds / this.seconds!!.seconds)
-            result += calculatedValue
+            result += calculateCallFee(it)
          }
         return result
     }
+
+    private fun calculateCallFee(call:Call):Double = this.amount.times(call.getDuration().seconds / this.seconds.seconds)
+
 }
 
-class NightlyDiscountPhone(private val nightlyAmount: Double, val regularAmount: Double, val c_seconds: Duration)
-    :Phone(regularAmount, c_seconds){
+class NightlyDiscountPhone(
+    private val nightlyAmount: Double,
+    private val regularAmount: Double,
+    private val seconds: Duration){
+
     private val LATE_NIGHT_HOUR:Int = 22
+    private val calls:ArrayList<Call> = ArrayList()
+    fun getCalls():List<Call> = this.calls
+    fun call(call:Call){
+        this.calls.add(call)
+    }
+    fun calculateFee(): Double {
+        var result:Double = 0.0
 
-    override fun calculateFee(): Double {
-        var result = super.calculateFee()
         this.calls.forEach{
-            if(it.getFrom().hour >= this.LATE_NIGHT_HOUR){
-                result = result.plus(
-                    amount!!.minus(this.nightlyAmount).times(
-                        it.getDuration().seconds / this.seconds!!.seconds
-                    )
-                )
-            }
+            result += calculateCallFee(it)
         }
-
         return result
+    }
+
+    private fun calculateCallFee(call:Call):Double{
+        return if(call.getFrom().hour >= this.LATE_NIGHT_HOUR){
+            return this.nightlyAmount.times(call.getDuration().seconds / this.seconds.seconds)
+        }else{
+            return this.regularAmount.times(call.getDuration().seconds / this.seconds.seconds)
+        }
     }
 }
 
