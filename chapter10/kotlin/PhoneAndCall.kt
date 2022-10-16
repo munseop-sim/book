@@ -11,53 +11,43 @@ class Call(private val from: LocalDateTime,
     fun getFrom():LocalDateTime = this.from
 }
 
+abstract class AbsractPhone(){
+    val calls:ArrayList<Call> = ArrayList()
+    fun call(call:Call){
+        this.calls.add(call)
+    }
+
+
+    fun calculateFee():Double{
+        var result = 0.0
+        this.calls.forEach{
+            result = result.plus(calculateCallFee(it))
+        }
+        return result
+    }
+    abstract protected fun calculateCallFee(call:Call):Double
+}
+
 /**
  * 통화요금 계산을 위한 Phone 클래스 (최초 요구사항)
  * (요구사항 추가) 통화요금에 대한 세금부과
  *
  * 차이를 메서드로 추출
  */
-open class Phone(val amount:Double,val seconds:Duration){
-    private val calls:ArrayList<Call> = ArrayList()
-
-    fun getCalls():List<Call> = this.calls
-    fun call(call:Call){
-        this.calls.add(call)
+open class Phone(val amount:Double,val seconds:Duration):AbsractPhone(){
+    override fun calculateCallFee(call:Call):Double {
+        return this.amount.times(call.getDuration().seconds / this.seconds.seconds)
     }
-
-    fun calculateFee():Double {
-        var result:Double = 0.0
-        this.calls.forEach{
-            result += calculateCallFee(it)
-         }
-        return result
-    }
-
-    private fun calculateCallFee(call:Call):Double = this.amount.times(call.getDuration().seconds / this.seconds.seconds)
-
 }
 
 class NightlyDiscountPhone(
     private val nightlyAmount: Double,
     private val regularAmount: Double,
-    private val seconds: Duration){
+    private val seconds: Duration):AbsractPhone(){
 
     private val LATE_NIGHT_HOUR:Int = 22
-    private val calls:ArrayList<Call> = ArrayList()
-    fun getCalls():List<Call> = this.calls
-    fun call(call:Call){
-        this.calls.add(call)
-    }
-    fun calculateFee(): Double {
-        var result:Double = 0.0
 
-        this.calls.forEach{
-            result += calculateCallFee(it)
-        }
-        return result
-    }
-
-    private fun calculateCallFee(call:Call):Double{
+    override fun calculateCallFee(call:Call):Double{
         return if(call.getFrom().hour >= this.LATE_NIGHT_HOUR){
             return this.nightlyAmount.times(call.getDuration().seconds / this.seconds.seconds)
         }else{
@@ -90,7 +80,8 @@ fun 요구사항() {
             LocalDateTime.of(2018, 1, 2, 12, 11, 0)
         )
     )
-    nightlyPhone.getCalls().forEach{
+
+    nightlyPhone.calls.forEach{
         phone.call(it)
     }
 
