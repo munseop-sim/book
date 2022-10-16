@@ -15,70 +15,55 @@ class Call(private val from: LocalDateTime,
  * 통화요금 계산을 위한 Phone 클래스 (최초 요구사항)
  * (요구사항 추가) 통화요금에 대한 세금부과
  */
-class Phone{
-    private val LATE_NIGHT_HOUR:Int = 22
-    enum class PhoneType{
-        REGULAR,
-        NIGHTLY
-    }
+open class Phone{
+    protected var amount:Double? = null
+    protected var seconds:Duration? = null
+    protected val calls:ArrayList<Call> = ArrayList()
 
-    private var phoneType:PhoneType? = null
-    private var amount:Double? = null
-    private var regularAmount:Double? = null
-    private var nightlyAmount:Double? = null
-    private var seconds:Duration? = null
-    private var taxRate:Double? = null
-
-    private val calls:ArrayList<Call> = ArrayList()
+    constructor(){}
 
     constructor(amount:Double,
                 seconds: Duration
-    ):this(PhoneType.REGULAR, amount, 0.0, 0.0, seconds){}
-
-    constructor(nightlyAmount: Double,
-                regularAmount: Double,
-                seconds: Duration
-    ):this(PhoneType.NIGHTLY, 0.0, nightlyAmount, regularAmount, seconds){}
-
-    private constructor(phoneType: PhoneType,
-    amount: Double,
-    nightlyAmount: Double,
-    regularAmount: Double,
-    seconds: Duration){
-        this.phoneType = phoneType
+    ){
         this.amount = amount
-        this.regularAmount = regularAmount
-        this.nightlyAmount = nightlyAmount
         this.seconds = seconds
     }
+
 
     fun getCalls():List<Call> = this.calls
     fun call(call:Call){
         this.calls.add(call)
     }
 
-    fun calculateFee():Double {
-        if(this.phoneType == null){
-            throw NullPointerException("")
-        }
+    open fun calculateFee():Double {
         var result:Double = 0.0
         this.calls.forEach{
-            if(this.phoneType == PhoneType.REGULAR ){
-                var calculatedValue = amount!!.times(other = it.getDuration().seconds / this.seconds!!.seconds)
-                result += calculatedValue
-            }else{
-                if(it.getFrom().hour >= this.LATE_NIGHT_HOUR){
-                    result += this.nightlyAmount!!.times(it.getDuration().seconds / this.seconds!!.seconds)
-                }else{
-                    result += this.regularAmount!!.times(it.getDuration().seconds / this.seconds!!.seconds)
-                }
-            }
-        }
+            var calculatedValue = amount!!.times(other = it.getDuration().seconds / this.seconds!!.seconds)
+            result += calculatedValue
+         }
         return result
     }
 }
 
+class NightlyDiscountPhone(private val nightlyAmount: Double, val regularAmount: Double, val c_seconds: Duration)
+    :Phone(regularAmount, c_seconds){
+    private val LATE_NIGHT_HOUR:Int = 22
 
+    override fun calculateFee(): Double {
+        var result = super.calculateFee()
+        this.calls.forEach{
+            if(it.getFrom().hour >= this.LATE_NIGHT_HOUR){
+                result = result.plus(
+                    amount!!.minus(this.nightlyAmount).times(
+                        it.getDuration().seconds / this.seconds!!.seconds
+                    )
+                )
+            }
+        }
+
+        return result
+    }
+}
 
 
 
@@ -90,7 +75,7 @@ class Phone{
  */
 fun 요구사항() {
     val phone: Phone = Phone(5.0, Duration.ofSeconds(10))
-    val nightlyPhone = Phone(3.0,5.0, Duration.ofSeconds(10))
+    val nightlyPhone = NightlyDiscountPhone(3.0,5.0, Duration.ofSeconds(10))
     nightlyPhone.call(
         Call(
             LocalDateTime.of(2018, 1, 1, 22, 10, 0),
