@@ -11,7 +11,7 @@ class Call(private val from: LocalDateTime,
     fun getFrom():LocalDateTime = this.from
 }
 
-abstract class AbsractPhone(){
+abstract class Phone(){
     val calls:ArrayList<Call> = ArrayList()
     fun call(call:Call){
         this.calls.add(call)
@@ -34,7 +34,7 @@ abstract class AbsractPhone(){
  *
  * 차이를 메서드로 추출
  */
-open class Phone(val amount:Double,val seconds:Duration):AbsractPhone(){
+open class RegularPhone(val amount:Double,val seconds:Duration):Phone(){
     override fun calculateCallFee(call:Call):Double {
         return this.amount.times(call.getDuration().seconds / this.seconds.seconds)
     }
@@ -43,7 +43,7 @@ open class Phone(val amount:Double,val seconds:Duration):AbsractPhone(){
 class NightlyDiscountPhone(
     private val nightlyAmount: Double,
     private val regularAmount: Double,
-    private val seconds: Duration):AbsractPhone(){
+    private val seconds: Duration):Phone(){
 
     private val LATE_NIGHT_HOUR:Int = 22
 
@@ -65,7 +65,7 @@ class NightlyDiscountPhone(
  * (코드개선) 중복코드를 피하기 위해 타입코드를 사용하여 클래스를 합침. 하지만 타입코드를 사용함으로 인해 낮은 응집도와 높은 결합또를 가지는 구조가 되었음
  */
 fun 요구사항() {
-    val phone: Phone = Phone(5.0, Duration.ofSeconds(10))
+    val phone: Phone = RegularPhone(5.0, Duration.ofSeconds(10))
     val nightlyPhone = NightlyDiscountPhone(3.0,5.0, Duration.ofSeconds(10))
     nightlyPhone.call(
         Call(
