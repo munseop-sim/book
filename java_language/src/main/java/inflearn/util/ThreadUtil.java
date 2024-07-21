@@ -1,13 +1,11 @@
-package util;
-
-import static util.MyLogger.log;
+package inflearn.util;
 
 public abstract class ThreadUtil {
     public static void sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            log("Thread interrupted : "+ e.getMessage());
+            MyLogger.log("Thread interrupted : "+ e.getMessage());
             throw new RuntimeException(e);
         }
     }

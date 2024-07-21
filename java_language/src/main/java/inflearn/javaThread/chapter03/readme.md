@@ -1,6 +1,6 @@
 # chapter03. 스레드 제어(join)와 생명주기
 
-## 1. 스레드 기본정보 ([ThreadInformationMain](./ThreadInformationMain.java))
+## 1. 스레드 기본정보 ([ThreadInformationMain](ThreadInformationMain.java))
 1. 스레드 ID - 스레드의 고유 식별자 (JVM내에서 각 스레드에 대해 유일값, 직접지정 불가)
 2. 스레드 이름 - 스레드이름 (중복가능)
 3. 스레드 우선순위 - 1~10, 기본값 5, 우선순위를 높게하면 CPU자원을 더 많이 할당받으나, 실제적으로는 CPU의 스레드 스케쥴링에 따라 결정된다.
@@ -13,7 +13,7 @@
    5. TIMED_WAITING
    6. TERMINATED
 
-## 2. 스레드 생명주기 ([ThreadLifeCycleMain](./ThreadLifeCycleMain.java))
+## 2. 스레드 생명주기 ([ThreadLifeCycleMain](ThreadLifeCycleMain.java))
 ![img.png](../../resources/md-resources/chapter03/thread_life_cycle.png)  
 ### 2.1 스레드 상태 
 1. NEW : 스레드 객체가 생성되었지만, `start()`메소드가 호출되지 않은 상태
@@ -35,7 +35,7 @@
 3. BLOCKED / WAITING / TIMED WAITING -> RUNNABLE : 락을 얻거나, wait(),sleep()메소드가 종료되면 RUNNABLE상태로 전이
 4. RUNNABLE -> TERMINATED : 스레드가 실행을 마치면 TERMINATED상태로 전이
 
-## 3. Join ([ThreadJoinMain](./ThreadJoinMain.java))
+## 3. Join ([ThreadJoinMain](ThreadJoinMain.java))
 - `Thread.run()` 실행시에 해당 스레드의 종료시점을 부모쓰레드에서는 알 수 있는 방법이 없다. 그러나 join()메소드를 사용하면 해당 스레드가 종료될 때까지 대기(`WAITING` 상태)할 수 있다.
 - `join()`메소드는 호출한 스레드가 종료될 때까지 대기하는 메소드
 - `join(long millis)`메소드는 호출한 스레드가 종료될 때까지 대기하는 메소드로, 일정시간동안 대기하다가 시간이 지나면 실행대기상태로 전환됨

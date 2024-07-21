@@ -1,12 +1,12 @@
-package chapter04;
+package inflearn.javaThread.chapter04;
 
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static util.MyLogger.log;
+import static inflearn.util.MyLogger.log;
 
-public class InterruptPrintMain {
+public class InterruptYieldPrintMain {
     public static void main(String[] args){
         InterruptPrint interruptPrint = new InterruptPrint();
         Thread thread = new Thread(interruptPrint,"interruptPrint");
@@ -35,6 +35,7 @@ public class InterruptPrintMain {
             try{
                 while(!Thread.interrupted()){
                     if(jobQueue.isEmpty()){
+                        Thread.yield();
                         continue;
                     }
 

@@ -1,11 +1,11 @@
-package chapter04;
+package inflearn.javaThread.chapter04;
 
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static util.MyLogger.log;
-import static util.ThreadUtil.sleep;
+import static inflearn.util.MyLogger.log;
+import static inflearn.util.ThreadUtil.sleep;
 
 public class FlagPrintMain {
     public static void main(String[] args){

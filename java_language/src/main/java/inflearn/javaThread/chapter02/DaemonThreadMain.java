@@ -1,4 +1,4 @@
-package chapter02;
+package inflearn.javaThread.chapter02;
 
 public class DaemonThreadMain {
     public static void main(String[] args) {

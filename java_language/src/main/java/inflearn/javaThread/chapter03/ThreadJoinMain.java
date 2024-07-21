@@ -1,6 +1,6 @@
-package chapter03;
+package inflearn.javaThread.chapter03;
 
-import static util.MyLogger.log;
+import static inflearn.util.MyLogger.log;
 
 public class ThreadJoinMain {
 

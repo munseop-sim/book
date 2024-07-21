@@ -1,6 +1,6 @@
-package chapter02;
+package inflearn.javaThread.chapter02;
 
-import static util.MyLogger.log;
+import static inflearn.util.MyLogger.log;
 
 public class HelloRunnableMain1 {
 
