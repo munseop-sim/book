@@ -7,7 +7,7 @@
 - Non-Repeatable Read, Phantom Read 발생 가능
 - Oracle, SQL-SERVER 의 default isolation level
 3. Repeatable Read (반복가능한 읽기)
-- 트랜잭셔니 시작되기 전에 커밋된 내용에 대해서만 조회 가능
+- 트랜잭션이 시작되기 전에 커밋된 내용에 대해서만 조회 가능
 - Phantom Read 발생 가능
 - MySQL의 default isolation level
 4. Serializable (직렬화)
