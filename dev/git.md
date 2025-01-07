@@ -95,3 +95,7 @@ ex) git rebase upstream/haseonj
 git checkout -b 신규_기능_브랜치명
 ex) git checkout -b feat/order
 ```
+
+## 15. git에 이미 추가되었으나, 파일은 삭제하지 않고 git에서 제외하는 방법
+1. `gitignore`파일에 제외할 파일명(or 폴더) 추가
+2. `git rm --cached [제외할 파일명]`
